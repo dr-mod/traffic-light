@@ -1,0 +1,14 @@
+**/*.iml
+**/*.ipr
+**/*.iws
+**/.classpath
+**/.idea/
+**/.project
+**/.settings
+**/target/
+build/*
+.gradle/*
+gradle
+id_rsa
+out
+*.iml

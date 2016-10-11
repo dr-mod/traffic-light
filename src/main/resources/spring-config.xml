@@ -1,0 +1,46 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="parsers" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <bean class="org.drmod.parsers.parser.JenkinsParser">
+                    <constructor-arg value="ProjectName"/>
+                    <constructor-arg value="http://192.168.170.253:8081/job/traffic-light/lastBuild/api/json"/>
+                </bean>
+                <bean class="org.drmod.parsers.parser.JenkinsParser">
+                    <constructor-arg value="ProjectName"/>
+                    <constructor-arg value="http://192.168.170.253:8081/job/q/lastBuild/api/json"/>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="notificator" class="org.drmod.representation.Notificator"/>
+    <bean class="org.drmod.representation.display.ConsoleView">
+        <constructor-arg ref="notificator"/>
+    </bean>
+    <bean class="org.drmod.representation.display.RPiPentaLedMockConsoleView">
+        <constructor-arg ref="notificator"/>
+    </bean>
+
+    <bean class="org.drmod.representation.display.RPiPentaLedView">
+        <constructor-arg ref="notificator"/>
+        <constructor-arg>
+            <bean class="com.pi4j.io.gpio.GpioFactory" factory-method="getInstance"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="run" class="org.drmod.Run">
+        <constructor-arg>
+            <bean class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
+        </constructor-arg>
+        <constructor-arg ref="notificator"/>
+        <constructor-arg ref="parsers"/>
+        <property name="interval" value="10"/>
+    </bean>
+
+</beans>
