@@ -1,4 +1,4 @@
-package org.drmod.parsers.parser;
+package org.drmod.parsers.model.gocd;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -6,7 +6,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JenkinsModel implements Serializable {
+public class Stage implements Serializable {
 
     private String result;
 
@@ -18,4 +18,12 @@ public class JenkinsModel implements Serializable {
     public void setResult(String result) {
         this.result = result;
     }
+
+    @Override
+    public String toString() {
+        return "Stage{" +
+                "result='" + result + '\'' +
+                '}';
+    }
+
 }

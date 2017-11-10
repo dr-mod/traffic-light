@@ -45,4 +45,5 @@ dependencies {
     compile('org.springframework:spring-core:4.1.1.RELEASE'){
         exclude group: 'commons-logging', module: 'commons-logging'
     }
+    testCompile('junit:junit:4.12')
 }

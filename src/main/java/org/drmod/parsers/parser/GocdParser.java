@@ -1,5 +1,6 @@
 package org.drmod.parsers.parser;
 
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -10,22 +11,24 @@ import org.codehaus.jackson.type.TypeReference;
 import org.drmod.parsers.ProjectStatus;
 import org.drmod.parsers.Status;
 import org.drmod.parsers.exception.ResponseException;
-import org.drmod.parsers.mapper.JenkinsMapper;
-import org.drmod.parsers.model.JenkinsModel;
+import org.drmod.parsers.mapper.GocdMapper;
+import org.drmod.parsers.model.gocd.Pagination;
 
 import java.io.IOException;
 
-public class JenkinsParser implements Parser {
+public class GocdParser implements Parser {
 
     private static final int HTTP_RESPONSE_OK = 200;
     private static final int TIMEOUT = 5000;
 
     private String name;
     private String url;
+    private String basicAuth;
 
-    public JenkinsParser(String name, String url) {
+    public GocdParser(String name, String url, String basicAuth) {
         this.name = name;
         this.url = url;
+        this.basicAuth = basicAuth;
     }
 
     public ProjectStatus call() throws Exception {
@@ -34,9 +37,11 @@ public class JenkinsParser implements Parser {
         HttpClient httpClient = new DefaultHttpClient();
         try {
             HttpGet httpGet = new HttpGet(url);
+            httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + basicAuth);
 
             HttpParams params = httpClient.getParams();
             HttpConnectionParams.setConnectionTimeout(params, TIMEOUT);
+
             HttpResponse httpResponse = httpClient.execute(httpGet);
 
             int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -44,7 +49,7 @@ public class JenkinsParser implements Parser {
                 throw new ResponseException();
             }
 
-            status = JenkinsMapper.parse(httpResponse.getEntity().getContent(), new TypeReference<JenkinsModel>() {});
+            status = GocdMapper.parse(httpResponse.getEntity().getContent(), new TypeReference<Pagination>() {});
         } catch (IOException | IllegalStateException e) {
             status = Status.CONNECTION_ERROR;
         } catch (ResponseException e) {
