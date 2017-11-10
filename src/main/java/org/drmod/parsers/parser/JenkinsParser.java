@@ -1,6 +1,7 @@
 package org.drmod.parsers.parser;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -17,7 +18,6 @@ import java.io.IOException;
 
 public class JenkinsParser implements Parser {
 
-    private static final int HTTP_RESPONSE_OK = 200;
     private static final int TIMEOUT = 5000;
 
     private String name;
@@ -40,7 +40,7 @@ public class JenkinsParser implements Parser {
             HttpResponse httpResponse = httpClient.execute(httpGet);
 
             int statusCode = httpResponse.getStatusLine().getStatusCode();
-            if (statusCode != HTTP_RESPONSE_OK) {
+            if (statusCode != HttpStatus.SC_OK) {
                 throw new ResponseException();
             }
 
